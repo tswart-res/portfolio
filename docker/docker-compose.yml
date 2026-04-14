@@ -1,0 +1,73 @@
+# Blue/green deployment - caddy, cloudflared, and two app slots.
+# All services share an internal bridge network; nothing binds to host port 80.
+# deploy.sh manages which slot Caddy proxies to.
+# DEPLOY_TAG is set by deploy.sh (e.g. abc1234-1713123456)
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: portfolio-caddy
+    restart: unless-stopped
+    volumes:
+      - ../infra/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ../public/media:/srv/media:ro
+    networks:
+      - internal
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: portfolio-cloudflared
+    restart: unless-stopped
+    command: tunnel --config /etc/cloudflared/config.yml run
+    volumes:
+      - ../infra/cloudflared-config.yml:/etc/cloudflared/config.yml:ro
+      # Place your tunnel credentials JSON in infra/.cloudflared/ (gitignored)
+      - ../infra/.cloudflared:/etc/cloudflared/creds:ro
+    networks:
+      - internal
+    depends_on:
+      - caddy
+
+  portfolio-blue:
+    image: portfolio:${DEPLOY_TAG:-latest}
+    container_name: portfolio-blue
+    restart: unless-stopped
+    # Exposed to localhost only - used by deploy.sh for health checks.
+    # Caddy reaches this service via Docker DNS (portfolio-blue:3000), not this port.
+    ports:
+      - "127.0.0.1:3001:3000"
+    volumes:
+      - ../public/media:/app/public/media:ro
+    env_file:
+      - ../.env.production
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  portfolio-green:
+    image: portfolio:${DEPLOY_TAG:-latest}
+    container_name: portfolio-green
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3002:3000"
+    volumes:
+      - ../public/media:/app/public/media:ro
+    env_file:
+      - ../.env.production
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+networks:
+  internal:
+    driver: bridge

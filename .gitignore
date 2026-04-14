@@ -1,0 +1,38 @@
+# Next.js build output
+.next/
+out/
+
+# Dependencies
+node_modules/
+
+# Environment secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Media content — keep directory structure, ignore content
+public/media/*
+!public/media/.gitkeep
+
+# Generated Caddy config and runtime deploy state
+infra/Caddyfile
+infra/.active_port
+
+# Cloudflare Tunnel credentials — never commit
+infra/.cloudflared/*
+!infra/.cloudflared/.gitkeep
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

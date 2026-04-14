@@ -1,0 +1,34 @@
+{
+    # Admin API - used by "docker exec portfolio-caddy caddy reload"
+    admin localhost:2019
+}
+
+:80 {
+    # Serve media files directly - bypasses Next.js entirely.
+    # Caddy handles HTTP range requests (206 Partial Content) for video seeking.
+    handle /media/* {
+        root * /srv/media
+        file_server
+    }
+
+    # Reverse proxy to the active deployment slot.
+    # __BACKEND__ is replaced with portfolio-blue:3000 or portfolio-green:3000
+    # by deploy.sh via sed. Caddy reaches the slot via Docker internal DNS.
+    handle {
+        reverse_proxy __BACKEND__ {
+            health_uri /api/health
+            health_interval 30s
+        }
+    }
+
+    # Security headers
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        -Server
+    }
+
+    encode gzip zstd
+}

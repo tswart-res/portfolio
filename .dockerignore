@@ -1,0 +1,26 @@
+# Build artifacts
+.next/
+node_modules/
+
+# Large media files — bind-mounted at runtime, not baked into the image
+public/media/
+
+# Environment secrets — never bake into image
+.env
+.env.*
+
+# Infrastructure and deployment scripts (not needed in image)
+infra/
+scripts/
+
+# Git metadata
+.git/
+.gitignore
+
+# Dev / CI tooling
+.specstory/
+*.md
+
+# OS noise
+.DS_Store
+Thumbs.db

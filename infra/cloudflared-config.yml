@@ -1,0 +1,23 @@
+# Cloudflare Tunnel configuration template.
+#
+# Setup steps (when you have a domain):
+#   1. cloudflared tunnel create portfolio
+#   2. cloudflared tunnel route dns portfolio your-domain.com
+#   3. cloudflared tunnel route dns portfolio www.your-domain.com
+#   4. Replace TUNNEL_ID_HERE with the UUID from step 1
+#   5. Copy the credentials JSON to infra/.cloudflared/TUNNEL_ID_HERE.json
+#      (this directory is gitignored - credentials are never committed)
+#
+# Traffic flow: Cloudflare → cloudflared → caddy (Docker internal DNS) → Next.js
+# Caddy handles all TLS - the tunnel connection is plain HTTP internally.
+
+tunnel: TUNNEL_ID_HERE
+credentials-file: /etc/cloudflared/creds/TUNNEL_ID_HERE.json
+
+ingress:
+  - hostname: your-domain.com
+    service: http://caddy
+  - hostname: www.your-domain.com
+    service: http://caddy
+  # Catch-all - required by cloudflared
+  - service: http_status:404

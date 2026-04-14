@@ -1,0 +1,35 @@
+---
+title: "Self-Hosted Homelab Setup"
+slug: "homelab-setup"
+description: "A fully self-hosted personal infrastructure - Caddy, Docker, Cloudflare tunnels, and blue/green deployments on a single Linux machine."
+date: "2025-11-01"
+tags: ["Docker", "Caddy", "Linux", "Cloudflare", "Self-hosted"]
+thumbnail: "/media/projects/homelab-setup/thumbnail.jpg"
+featured: true
+status: "completed"
+---
+
+## Overview
+
+This project documents my self-hosted homelab setup - everything from the base OS config to automated blue/green deployments and Cloudflare Tunnel integration.
+
+## What I Built
+
+- **Caddy** as the reverse proxy with automatic TLS via Cloudflare tunnels
+- **Docker** containerisation for all services
+- **Blue/Green deployment** via a shell script that health-checks the new container before swapping Caddy's upstream
+- **Cloudflared** tunnel for zero-exposure ingress - no open ports on the router
+
+## Architecture
+
+The deployment pipeline looks like this:
+
+1. Run `deploy.sh` locally
+2. Docker builds a new image tagged with the git commit SHA
+3. The new container starts on the inactive port (3001 or 3002)
+4. Health check passes → Caddy's config is regenerated with `sed` and reloaded
+5. Old container is stopped after a 5-second drain window
+
+## Lessons Learned
+
+The biggest surprise was how reliable Caddy is for this use case - zero SSL configuration needed, and the `caddy reload` command atomically swaps configurations without dropping connections.

@@ -1,0 +1,29 @@
+---
+title: "This Portfolio"
+slug: "portfolio-website"
+description: "A self-hosted portfolio built with Next.js 16, Tailwind CSS v4, and MDX-driven project pages. Dark techy aesthetic with light mode support."
+date: "2026-04-01"
+tags: ["Next.js", "TypeScript", "Tailwind CSS", "Motion", "Docker"]
+thumbnail: "/media/projects/portfolio-website/thumbnail.png"
+repoUrl: "https://github.com/tswart-res/portfolio"
+featured: true
+status: "completed"
+---
+
+## Overview
+
+The site you're reading right now. Built with a focus on performance, SEO, and a polished developer aesthetic.
+
+## Technical Choices
+
+- **Next.js 16** with App Router and static generation for all project pages
+- **Tailwind CSS v4** with CSS-first configuration - no `tailwind.config.ts` needed
+- **Motion v12** (formerly Framer Motion) for page transitions and scroll-triggered reveals
+- **next-mdx-remote v6** for RSC-rendered MDX project pages
+- **Resend** for contact form email delivery with in-memory rate limiting
+
+## Deployment
+
+Runs in Docker on a personal Linux machine, served through Caddy as a reverse proxy. Blue/green deployments via a `deploy.sh` script - zero downtime when pushing updates.
+
+Media files (images and videos) are volume-mounted and served directly by Caddy, which handles HTTP range requests natively for video seeking.

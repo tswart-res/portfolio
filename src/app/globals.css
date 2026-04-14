@@ -1,0 +1,86 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Dark mode: next-themes adds the 'dark' class to <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Design tokens */
+@theme {
+  /* Zinc-based dark-techy palette */
+  --color-bg: oklch(10% 0.005 264);
+  --color-surface: oklch(14% 0.006 264);
+  --color-surface-alt: oklch(18% 0.007 264);
+  --color-border: oklch(25% 0.008 264);
+  --color-fg: oklch(96% 0.003 264);
+  --color-muted: oklch(60% 0.01 264);
+  --color-accent: oklch(74% 0.17 200);      /* cyan-400 equivalent */
+  --color-accent-dim: oklch(74% 0.17 200 / 12%);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --radius-card: 0.75rem;
+}
+
+/* Base variables (dark by default - system default, overridden by .light) */
+:root {
+  --bg: var(--color-bg);
+  --surface: var(--color-surface);
+  --surface-alt: var(--color-surface-alt);
+  --border: var(--color-border);
+  --fg: var(--color-fg);
+  --muted: var(--color-muted);
+  --accent: var(--color-accent);
+  --accent-dim: var(--color-accent-dim);
+  --glow: 0 0 20px oklch(74% 0.17 200 / 15%);
+}
+
+/* Light mode overrides - next-themes adds .light to <html> */
+.light {
+  --bg: oklch(98% 0.002 264);
+  --surface: oklch(93% 0.004 264);       /* slightly more card definition */
+  --surface-alt: oklch(87% 0.006 264);   /* better contrast for chip backgrounds */
+  --border: oklch(72% 0.008 264);        /* more visible borders */
+  --fg: oklch(12% 0.005 264);
+  --muted: oklch(40% 0.01 264);          /* ~5.9:1 on bg - was 48% (~4:1, failing) */
+  --accent: oklch(38% 0.14 200);         /* dark teal - same hue, 8:1+ on white */
+  --accent-dim: oklch(88% 0.06 200);     /* light teal chip bg for tags */
+  --glow: none;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  min-height: 100vh;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Subtle custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Prose MDX overrides */
+.prose {
+  --tw-prose-body: var(--fg);
+  --tw-prose-headings: var(--fg);
+  --tw-prose-code: var(--accent);
+  --tw-prose-links: var(--accent);
+  --tw-prose-bold: var(--fg);
+  --tw-prose-quotes: var(--muted);
+  --tw-prose-hr: var(--border);
+  --tw-prose-pre-bg: var(--surface);
+}

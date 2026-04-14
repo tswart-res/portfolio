@@ -1,0 +1,44 @@
+---
+title: "Grocery Lens"
+slug: "grocery-lens"
+description: "A Django/PostgreSQL data product with custom dietary filters, recipe matching, basket synchronisation and NLP-assisted ingredient processing - built and operated from scratch."
+date: "2026-04-14"
+tags: ["Python", "Django", "PostgreSQL", "Docker", "Playwright", "spaCy", "Grafana"]
+thumbnail: "/media/projects/grocery-lens/thumbnail.svg"
+liveUrl: "https://grocerylens.co.uk"
+featured: true
+status: "in-progress"
+---
+
+## Overview
+
+Grocery Lens is a Django/PostgreSQL data product I've been building from scratch since July 2025. It combines custom dietary filters, recipe matching, basket synchronisation and NLP-assisted ingredient processing to help users navigate grocery data in ways retailer apps don't support.
+
+The backend is the core challenge: designing a platform that handles scraping, ingestion, data quality repair, search and analytics from the same PostgreSQL schema - without losing data integrity as the product grows.
+
+## Product Features
+
+- **Dietary filters** - user-created diet templates with ingredient-level allow/restrict rules; publicly posted diets support community upvoting and downvoting
+- **Recipe matching** - compatible recipes surfaced per diet; background caching pre-computes matches after a diet is saved so results are instant on first load
+- **Basket & favourites** - add products to a grocery basket, favourite individual items, track changes over time
+- **Price history** - per-product price tracking across scrape runs; surfaced in product detail and the compare page
+- **Compare page** - side-by-side product comparison across retailers
+- **D3.js dietary tree visualiser** - interactive ingredient hierarchy view - [see it live](https://grocerylens.co.uk/diet/4/low-fodmap-template/?view=tree)
+
+## What I Built
+
+- **Production data platform:** PostgreSQL schemas for semi-structured product and analytics workloads using `JSONField`, `ArrayField`, GIN indexes and integrity constraints
+- **Replayable ingestion workflows:** loading retailer scrapes, public datasets and CSV logs with upserts, transactional writes and structured repair tables for relinking, backfills and taxonomy improvement
+- **NLP ingredient processing:** canonicalisation and fuzzy matching with spaCy; fixed a scraper memory leak that reached 5.9 GB over 5,938 products
+- **Concurrency-aware processing:** bounded concurrency, retry-safe queues using `select_for_update(skip_locked)` to balance throughput and reliability
+- **Background caching:** post-save signals trigger async pre-computation of recipe and product compatibility so users never wait for cold results
+- **Privacy-aware analytics:** retention controls, aggregation layers and reporting controls built for a live service
+- **Observability:** Grafana/Loki log aggregation, health checks, blue/green deployments and rollback-safe traffic switching
+
+## Technical Choices
+
+- **Django ORM + raw SQL** - Django models for application logic; raw SQL for complex ingestion queries, upserts and repair workflows where the ORM adds unnecessary overhead
+- **PostgreSQL** - `JSONField` and `ArrayField` for semi-structured product data; GIN indexes for fast search; queue-backed processing using `select_for_update(skip_locked)` for background work
+- **Playwright + BeautifulSoup** - Playwright for JS-rendered retailer pages; BeautifulSoup for lighter scraping tasks
+- **Docker + Caddy** - containerised service behind Caddy, deployed blue/green with a health-check-gated swap script
+- **Grafana + Loki** - structured log aggregation for pipeline health and data quality trend monitoring
