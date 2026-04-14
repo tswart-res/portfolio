@@ -8,6 +8,7 @@
     # Caddy handles HTTP range requests (206 Partial Content) for video seeking.
     handle /media/* {
         root * /srv/media
+        uri strip_prefix /media
         file_server
     }
 

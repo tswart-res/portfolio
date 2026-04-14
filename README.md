@@ -183,7 +183,7 @@ All services run in the same Docker Compose network, so cloudflared reaches Cadd
 
 ```bash
 # 1. Install cloudflared locally (for tunnel setup only)
-#    https://developers.cloudflare.com/cloudflared/get-started/
+#    https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/do-more-with-tunnels/local-management/create-local-tunnel/#1-download-and-install-cloudflared
 
 # 2. Log in and create the tunnel
 cloudflared tunnel login
