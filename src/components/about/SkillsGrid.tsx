@@ -3,7 +3,7 @@ import AnimatedSection from "@/components/shared/AnimatedSection";
 const skillCategories = [
   {
     name: "Core Stack",
-    skills: ["Python", "Django", "PostgreSQL", "SQL", "SQLAlchemy"],
+    skills: ["Python", "Django", "PostgreSQL", "BigQuery", "AWS", "SQL", "SQLAlchemy"],
   },
   {
     name: "Ingestion & Scraping",
@@ -11,7 +11,7 @@ const skillCategories = [
   },
   {
     name: "Infrastructure & Ops",
-    skills: ["Docker", "Grafana", "Loki", "GitHub Actions", "Linux", "AWS EC2", "AWS RDS", "CloudWatch"],
+    skills: ["Docker", "Grafana", "Loki", "GitHub Actions", "Linux", "AWS S3", "AWS EC2", "AWS RDS", "CloudWatch"],
   },
   {
     name: "Visualisation",

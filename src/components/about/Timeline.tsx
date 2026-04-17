@@ -13,7 +13,7 @@ const events = [
     role: "Data Engineer",
     org: "Department for Business & Trade, UK Government",
     description:
-      "Led the Data Pipeline Service team (2–3 engineers). Built and maintained Airflow/PostgreSQL/SQLAlchemy pipelines ingesting APIs, S3, GA4, Qualtrics and Comtrade data. Reduced failing pipeline backlog from 50+ to fewer than 10.",
+      "Led the Data Pipeline Service team (5 engineers). Built and maintained Airflow/PostgreSQL/SQLAlchemy pipelines ingesting APIs, S3, GA4, Qualtrics and Comtrade data. Designed a TB-scale trade data pipeline with partitioned ingestion for high-volume analytics. Reduced failing pipeline backlog from 50+ to fewer than 5 in under 3 months.",
   },
   {
     year: "2023",
@@ -37,8 +37,14 @@ const events = [
   },
   {
     year: "2016 – 2017",
-    role: "MSc Neuroscience",
+    role: "MSc Neuroscience (1st)",
     org: "King's College London",
+    description: "",
+  },
+  {
+    year: "2011 – 2014",
+    role: "BSc Biology (2:1)",
+    org: "Imperial College London",
     description: "",
   },
 ];
