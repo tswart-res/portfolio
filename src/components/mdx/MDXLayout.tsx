@@ -94,6 +94,7 @@ export default function MDXLayout({ frontmatter, children }: MDXLayoutProps) {
             src={thumbnail}
             alt={title}
             fill
+            unoptimized
             className="object-cover"
             priority
             sizes="(max-width: 768px) 100vw, 768px"

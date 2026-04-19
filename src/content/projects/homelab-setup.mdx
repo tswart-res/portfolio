@@ -1,35 +1,54 @@
 ---
-title: "Self-Hosted Homelab Setup"
-slug: "homelab-setup"
-description: "A fully self-hosted personal infrastructure - Caddy, Docker, Cloudflare tunnels, and blue/green deployments on a single Linux machine."
-date: "2025-11-01"
-tags: ["Docker", "Caddy", "Linux", "Cloudflare", "Self-hosted"]
-thumbnail: "/media/projects/homelab-setup/thumbnail.jpg"
+title: "Home Assistant Cat Alarm"
+slug: "ha-cat-alarm"
+description: "A Home Assistant automation that monitors a front door contact sensor and announces escalating Alexa warnings when the door is left open. Built to keep cats indoors. Runs on a Raspberry Pi 4B with Docker and AppDaemon."
+date: "2025-12-01"
+tags: ["Python", "Home Assistant", "AppDaemon", "Docker", "Raspberry Pi", "IoT"]
+thumbnail: "/media/projects/ha-cat-alarm/thumbnail.png"
+repoUrl: "https://github.com/tswart-res/ha-cat-alarm"
 featured: false
 status: "completed"
 ---
 
 ## Overview
 
-This project documents my self-hosted homelab setup - everything from the base OS config to automated blue/green deployments and Cloudflare Tunnel integration.
+A Home Assistant automation that monitors a front door contact sensor and announces repeated warnings on an Alexa Echo Dot when the door is left open. Built to keep cats from slipping out unnoticed.
 
-## What I Built
+Runs in Docker on a Raspberry Pi 4B. The automation logic is written in Python using AppDaemon, which lets you write event-driven HA automations as plain Python classes rather than YAML.
 
-- **Caddy** as the reverse proxy with automatic TLS via Cloudflare tunnels
-- **Docker** containerisation for all services
-- **Blue/Green deployment** via a shell script that health-checks the new container before swapping Caddy's upstream
-- **Cloudflared** tunnel for zero-exposure ingress - no open ports on the router
+## How It Works
+
+When the door opens, a 20-second timer starts. If the door is still open when the timer fires, Alexa announces a warning. The warning repeats every 20 seconds with an escalating duration count until the door closes. Closing the door at any point cancels the timer immediately.
 
 ## Architecture
 
-The deployment pipeline looks like this:
+Two Docker containers run side by side on the Pi:
 
-1. Run `deploy.sh` locally
-2. Docker builds a new image tagged with the git commit SHA
-3. The new container starts on the inactive port (3001 or 3002)
-4. Health check passes → Caddy's config is regenerated with `sed` and reloaded
-5. Old container is stopped after a 5-second drain window
+- **homeassistant**: integrates the TP-Link Tapo T110 contact sensor (via the T100 hub) and the Alexa Devices integration for TTS announcements
+- **appdaemon**: runs `cat_alarm.py`, a Python class that listens for state changes on the door sensor and drives the announcement logic
 
-## Lessons Learned
+Optional Telegram notifications send a message when warnings start and stop, useful if you're not near the Echo.
 
-The biggest surprise was how reliable Caddy is for this use case - zero SSL configuration needed, and the `caddy reload` command atomically swaps configurations without dropping connections.
+## Hardware
+
+- Raspberry Pi 4B (2 GB+ RAM)
+- TP-Link Tapo T100 smart hub
+- TP-Link Tapo T110 door/window contact sensor
+- Amazon Echo Dot (any generation)
+- Telegram account (optional)
+
+## Technical Notes
+
+- **AppDaemon over YAML automations**: AppDaemon lets you write the escalation loop and cancellation logic cleanly in Python, where YAML automations would require several template workarounds
+- **Host networking on Pi**: switching to `network_mode: host` in `docker-compose.yml` is required for reliable mDNS/Zeroconf discovery of LAN devices on a Raspberry Pi - bridge networking drops packets from Tapo and Alexa integrations
+- **Tapo firmware quirk**: a late-2024 TP-Link firmware update disabled third-party API access by default - re-enabling it requires toggling "Third-Party Services" in the Tapo mobile app
+- **Entity IDs in secrets**: door sensor and Alexa notify entity IDs live in a gitignored `secrets.yaml`, keeping them out of version control alongside API tokens
+
+## Configuration
+
+All timing and message content is configurable in `apps.yaml`:
+
+- **`initial_delay`** (default: 20s) - delay after the door opens before the first warning
+- **`repeat_interval`** (default: 20s) - gap between repeated warnings
+- **`warning_message`** - TTS message template (`{duration}` = elapsed seconds)
+- **`telegram_message`** - Telegram message template (optional)

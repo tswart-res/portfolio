@@ -42,6 +42,7 @@ docker build -f docker/Dockerfile -t portfolio:local .
 docker run --rm -p 3000:3000 \
   -e EMAIL_ENABLED=false \
   -e NEXT_PUBLIC_SITE_URL=http://localhost:3000 \
+  -v /home/debiantreeb/portfolio/public/media:/app/public/media \
   portfolio:local
 # http://localhost:3000
 ```

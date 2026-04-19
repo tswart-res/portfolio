@@ -37,13 +37,13 @@ const events = [
   },
   {
     year: "2016 – 2017",
-    role: "MSc Neuroscience (1st)",
+    role: "MSc Neuroscience",
     org: "King's College London",
     description: "",
   },
   {
     year: "2011 – 2014",
-    role: "BSc Biology (2:1)",
+    role: "BSc Biology",
     org: "Imperial College London",
     description: "",
   },

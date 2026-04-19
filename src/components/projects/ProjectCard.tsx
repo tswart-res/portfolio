@@ -53,9 +53,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           {project.description}
         </p>
 
-        {/* Tags */}
+        {/* Tags — capped at 4 to keep card heights consistent */}
         <div className="flex flex-wrap gap-1.5 mb-4">
-          {project.tags.map((tag) => (
+          {project.tags.slice(0, 4).map((tag) => (
             <span
               key={tag}
               className="text-xs px-2 py-0.5 rounded-full bg-[var(--accent-dim)] text-[var(--accent)] font-mono"
@@ -63,6 +63,11 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               {tag}
             </span>
           ))}
+          {project.tags.length > 4 && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-[var(--surface-alt)] text-[var(--muted)] font-mono">
+              +{project.tags.length - 4}
+            </span>
+          )}
         </div>
 
         {/* Links row - relative + z-10 lifts these above the ::after overlay */}
