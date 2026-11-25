@@ -14,6 +14,9 @@ node_modules/
 public/media/*
 !public/media/.gitkeep
 
+# Private pages served by Caddy (e.g. /coutts finance dashboard) — never commit
+private/
+
 # Generated Caddy config and runtime deploy state
 infra/Caddyfile
 infra/.active_port

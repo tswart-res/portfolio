@@ -11,6 +11,8 @@ services:
     volumes:
       - ../infra/Caddyfile:/etc/caddy/Caddyfile:ro
       - ../public/media:/srv/media:ro
+      # Private /coutts dashboard - gitignored, copied to the host separately.
+      - ../private:/srv/private:ro
     networks:
       - internal
 

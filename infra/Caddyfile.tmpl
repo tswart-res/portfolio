@@ -12,6 +12,32 @@
         file_server
     }
 
+    # Private dashboard at /coutts.
+    # Login is enforced at the edge by a Cloudflare Access application on
+    # tomswart.co.uk/coutts. The page is a static file in private/coutts/ on the
+    # host (gitignored, bind-mounted read-only) - it is never in git or the image.
+    #
+    # Serve it only when the raw request URI is exactly /coutts, /coutts/ or
+    # /coutts/index.html (query string allowed). {http.request.uri} is not
+    # percent-decoded, so /%63outts or /Coutts cannot match here; those fall
+    # through to the 404 below instead of slipping past the Access path rule.
+    @coutts expression `{http.request.uri}.matches("^/coutts(/|/index\\.html)?(\\?.*)?$")`
+    handle @coutts {
+        root * /srv/private/coutts
+        rewrite * /index.html
+        header {
+            X-Robots-Tag "noindex, nofollow"
+            Cache-Control "private, no-store"
+        }
+        file_server
+    }
+
+    # Any other spelling of the path (case, encoding, sub-paths): refuse.
+    @coutts_variant path_regexp (?i)^/coutts
+    handle @coutts_variant {
+        respond 404
+    }
+
     # Reverse proxy to the active deployment slot.
     # __BACKEND__ is replaced with portfolio-blue:3000 or portfolio-green:3000
     # by deploy.sh via sed. Caddy reaches the slot via Docker internal DNS.
